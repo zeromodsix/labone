@@ -13,3 +13,4 @@
 ## Miscellany
 
 * [Hipchat room](https://www.hipchat.com/invite/314159/f5d4d779252465a25c05065d4e329bc6). 
+* Use [scrapbook](https://github.com/zeromodsix/labone/wiki/Scrapbook) to share relevant information regarding project.
