@@ -1,9 +1,10 @@
 #include<iostream>
 #include<string.h>
 #include<string>
-#define SIZE 4294967297 /* 2^32 + 1 */
+#define SIZE 4294 /* Need to increase this */
 
 int numFiles;
+class filecount * templist = NULL;
 
 class filecount
 {
@@ -36,7 +37,7 @@ public:
   {
     return str;
   }
-  filecount getFileList()
+  filecount* getFileList()
   {
     return fileList;
   }
@@ -44,7 +45,7 @@ public:
   {
     str = st;
   }
-  linkedHashEntry getNext()
+  linkedHashEntry* getNext()
   {
     return next;
   }
@@ -59,13 +60,19 @@ public:
     fileList = new filecount[numFiles];
     next = NULL;
   }
-  void change(std::st, unsigned int file);
+  void change(std::string st, unsigned int file);
+  void fileIncrease(unsigned int file);
 
 };
 
-void linkedHashEntry::change(std::st, unsigned int file)
+void linkedHashEntry::change(std::string st, unsigned int file)
 {
   str = st; 
+  fileList[file].increase();
+}
+
+void linkedHashEntry::fileIncrease(unsigned int file)
+{
   fileList[file].increase();
 }
 
@@ -75,39 +82,78 @@ class hashMap
 private:
   linkedHashEntry **table;
 public:
-  unsigned int get(string str);
+  unsigned long int hash(const std::string );
   void put(std::string str, unsigned int file);
+  int get(std::string str);
   hashMap()
   {
     table = new linkedHashEntry*[SIZE];
     for(int i = 0; i< SIZE; i++)
       table[i] = NULL;
   }
-  unsigned long int hash(const std::string );
+  
 };
 
-void hashMap::put(std::string str, unsigned int file)
+/* Returns -1 if entry is not present, returns 1 and copies the pointer to list to templist */
+int hashMap::get(std:: string str)
 {
-  unsigned long int hash = hash(str);
-  if(table[hash] == NULL)
-    table[hash] = new linkedHashEntry(str, file);
+  unsigned long int hash1 = hash(str);
+  if(table[hash1] == NULL)
+    return -1;
   else
     {
-      linkedHashEntry * entry = table[hash];
-      while(entry->getNext() ! = NULL)
+      linkedHashEntry * entry = table[hash1];
+      while(entry != NULL && entry->getStr() != str)
 	{
-	  entry = entry->next;
+	  entry = entry->getNext();
+	}
+      if(entry == NULL)
+	return -1;
+      else
+	{
+	  templist = entry->getFileList();
+	  return 1;
 	}
     }
 }
 
-unsigned long int hash(const std::string str)
+void hashMap::put(std::string str, unsigned int file)
+{
+  unsigned long int hash1 = hash(str);
+  if(table[hash1] == NULL)
+    {
+      table[hash1] = new linkedHashEntry;
+      table[hash1]->change(str, file);
+    }
+  else
+    {
+      linkedHashEntry * entry = table[hash1];
+      while(entry->getNext() != NULL && entry->getStr() != str)
+	{
+	  entry = entry->getNext();
+	}
+      if(entry->getStr() == str)
+	{
+	  entry->fileIncrease(file);
+	}
+      else
+	{
+	  linkedHashEntry * temp = new linkedHashEntry;
+	  temp->change(str, file);
+	  entry->setNext(temp);
+	}
+    }
+}
+
+unsigned long int hashMap::hash(const std::string str) 
 {
   unsigned long int hash = 5381;
   int c;
-  unsigned char *st = new unsigned char[str.size()];
-  st[0] = 0;
-  strcopy(st, str.c_str());
+  char *temp = new char[str.size()];
+  temp[0] = 0;
+  strcpy(temp, str.c_str());
+  unsigned char * st = reinterpret_cast<unsigned char *>(temp);
+  /* http://stackoverflow.com/questions/5040920/ */
   while (c = *st++)
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
@@ -115,3 +161,8 @@ unsigned long int hash(const std::string str)
 }
 
 
+int main()
+{
+  hashMap test;
+  return 0;
+}
