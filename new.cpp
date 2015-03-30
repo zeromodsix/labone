@@ -1,9 +1,10 @@
 #include<iostream>
 #include<string.h>
 #include<string>
-#define SIZE 4294 /* Need to increase this */
-
-int numFiles;
+#include<stdlib.h>
+#define SIZE 100000 /* Need to increase this!! */
+#define numFiles 10 
+//int numFiles;
 class filecount * templist = NULL;
 
 class filecount
@@ -88,6 +89,11 @@ public:
   hashMap()
   {
     table = new linkedHashEntry*[SIZE];
+    if(!table)
+      {
+	std::cout<<"Not sufficient memory"<<std::endl;
+	exit(EXIT_FAILURE);
+      }
     for(int i = 0; i< SIZE; i++)
       table[i] = NULL;
   }
@@ -145,6 +151,7 @@ void hashMap::put(std::string str, unsigned int file)
     }
 }
 
+/* djb2 hashing algorithm http://www.cse.yorku.ca/~oz/hash.html */ 
 unsigned long int hashMap::hash(const std::string str) 
 {
   unsigned long int hash = 5381;
@@ -157,12 +164,16 @@ unsigned long int hashMap::hash(const std::string str)
   while (c = *st++)
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-  return hash;
+  return (hash % SIZE);
 }
 
 
 int main()
 {
   hashMap test;
+  test.put("hello", 1);
+  test.put("hello", 2);
+  test.get("hello");
+  std::cout<<templist[1].ret_count()<<" " <<templist[2].ret_count()<<" "<<templist[0].ret_count()<<std::endl;
   return 0;
 }
