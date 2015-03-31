@@ -2,9 +2,9 @@
 #include<string.h>
 #include<string>
 #include<stdlib.h>
+#include<fstream>
 #define SIZE 100000 /* Need to increase this!! */
-#define numFiles 10 
-//int numFiles;
+int numFiles;
 class filecount * templist = NULL;
 
 class filecount
@@ -167,13 +167,62 @@ unsigned long int hashMap::hash(const std::string str)
   return (hash % SIZE);
 }
 
+unsigned int Lines(std::ifstream &inp);
+
 
 int main()
 {
+  /* currently only works on linux OS */ 
+  /* Store files in the folder named "files", where "files" is a subfolder of the folder where file is present */
+  system("ls files/*.txt>/tmp/files.txt");
+  system("pwd");
+  //system("ls *.txt");
+  std::ifstream fin("/tmp/files.txt");
+  numFiles = Lines(fin);
+  std::string *fNames = new std::string[numFiles];
+  for(int i =0; i< numFiles; i++)
+    {
+      std::getline(fin, fNames[i]);
+    }
+  std::cout<<"The list of files that are read"<<std::endl;
+  for(int i =0; i< numFiles; i++)
+    {
+      std::cout<<fNames[i]<<std::endl;
+    }
+  std::string temp; 
   hashMap test;
-  test.put("hello", 1);
-  test.put("hello", 2);
-  test.get("hello");
-  std::cout<<templist[1].ret_count()<<" " <<templist[2].ret_count()<<" "<<templist[0].ret_count()<<std::endl;
+  for(int i =0; i< numFiles; i++)
+    {
+      std::ifstream inp(fNames[i].c_str());
+      while(inp>>temp)
+	{
+	  if(temp != "")
+	    test.put(temp, i);
+	}  
+      inp.close();
+    }
+  std::cout<<"Enter string to search for: ";
+  std::cin>>temp;
+  int flag = test.get(temp);
+  if(flag == -1)
+    std::cout<<"Not found"<<std::endl;
+  else if(flag == 1)
+    {
+      std::cout<<"String found"<<std::endl;
+      std::cout<<"Indexes are the following"<<std::endl;
+      for(int i = 0; i<numFiles; i++)
+	std::cout<<fNames[i]<<":"<<templist[i].ret_count()<<std::endl;
+    }
   return 0;
+}
+
+unsigned int Lines(std::ifstream &inp)
+{
+  unsigned int count = 0;
+  std::string temp;
+  while(std::getline(inp, temp))
+    count++;
+  inp.clear();
+  inp.seekg(0, std::ios::beg); /* Back to the beggining of the file */
+  return count;
 }
