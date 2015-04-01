@@ -1,9 +1,10 @@
 #include<iostream>
 #include<string.h>
 #include<string>
+#include<string.h>
 #include<stdlib.h>
 #include<fstream>
-#define SIZE 100000 /* Need to increase this!! */
+#define SIZE 10000000 /* Need to increase this!! */
 int numFiles;
 class filecount * templist = NULL;
 
@@ -168,6 +169,7 @@ unsigned long int hashMap::hash(const std::string str)
 }
 
 unsigned int Lines(std::ifstream &inp);
+std:: string strip(std::string  str);
 
 
 int main()
@@ -175,8 +177,6 @@ int main()
   /* currently only works on linux OS */ 
   /* Store files in the folder named "files", where "files" is a subfolder of the folder where file is present */
   system("ls files/*.txt>/tmp/files.txt");
-  system("pwd");
-  //system("ls *.txt");
   std::ifstream fin("/tmp/files.txt");
   numFiles = Lines(fin);
   std::string *fNames = new std::string[numFiles];
@@ -196,6 +196,7 @@ int main()
       std::ifstream inp(fNames[i].c_str());
       while(inp>>temp)
 	{
+	  temp = strip(temp);
 	  if(temp != "")
 	    test.put(temp, i);
 	}  
@@ -203,6 +204,12 @@ int main()
     }
   std::cout<<"Enter string to search for: ";
   std::cin>>temp;
+  temp = strip(temp);
+  if(temp == "")
+    {
+      std::cout<<"Improper search: you searched for \""<<temp<<"\""<<std::endl;
+      return 0;
+    }
   int flag = test.get(temp);
   if(flag == -1)
     std::cout<<"Not found"<<std::endl;
@@ -213,6 +220,7 @@ int main()
       for(int i = 0; i<numFiles; i++)
 	std::cout<<fNames[i]<<":"<<templist[i].ret_count()<<std::endl;
     }
+  fin.close();
   return 0;
 }
 
@@ -223,6 +231,30 @@ unsigned int Lines(std::ifstream &inp)
   while(std::getline(inp, temp))
     count++;
   inp.clear();
-  inp.seekg(0, std::ios::beg); /* Back to the beggining of the file */
+  inp.seekg(0, std::ios::beg); /* Back to the beginning of the file */
   return count;
+}
+
+std:: string strip(std::string str)
+{
+  char * s = new char[str.size()];
+  char * temp = new char[str.size()];
+  strcpy(s,str.c_str());
+  int j = 0;
+  for(int i = 0; i<str.size(); i++)
+    {
+      if(('a'<= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+	{
+	  if(('A' <= s[i]) && (s[i] <= 'Z'))
+	    temp[j++] = s[i]+'a'-'A';
+	  else
+	    temp[j++] = s[i];
+	}
+    }
+  temp[j] = 0; 
+  if(j == 0)
+    str.assign("");
+  else
+    str.assign(temp);
+  return str;  
 }
