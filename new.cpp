@@ -4,8 +4,8 @@
 #include<string.h>
 #include<stdlib.h>
 #include<fstream>
-#define SIZE 10000000 /* Need to increase this!! */
-int numFiles;
+#define SIZE 1000000 /* need to increase this!! */
+unsigned int numFiles;
 class filecount * templist = NULL;
 
 class filecount
@@ -92,7 +92,7 @@ public:
     table = new linkedHashEntry*[SIZE];
     if(!table)
       {
-	std::cout<<"Not sufficient memory"<<std::endl;
+	std::cout<<"Insufficient memory"<<std::endl;
 	exit(EXIT_FAILURE);
       }
     for(int i = 0; i< SIZE; i++)
@@ -100,6 +100,7 @@ public:
   }
   
 };
+
 
 /* Returns -1 if entry is not present, returns 1 and copies the pointer to list to templist */
 int hashMap::get(std:: string str)
@@ -130,6 +131,11 @@ void hashMap::put(std::string str, unsigned int file)
   if(table[hash1] == NULL)
     {
       table[hash1] = new linkedHashEntry;
+      if(table[hash1] == NULL)
+	{
+	  std::cout<<"Insufficient memory"<<std::endl;
+	  exit(EXIT_FAILURE);
+	}
       table[hash1]->change(str, file);
     }
   else
@@ -146,6 +152,11 @@ void hashMap::put(std::string str, unsigned int file)
       else
 	{
 	  linkedHashEntry * temp = new linkedHashEntry;
+	  if(temp == NULL)
+	    {
+	      std::cout<<"Insufficient memory"<<std::endl;
+	      exit(EXIT_FAILURE);
+	    }
 	  temp->change(str, file);
 	  entry->setNext(temp);
 	}
@@ -170,6 +181,8 @@ unsigned long int hashMap::hash(const std::string str)
 
 unsigned int Lines(std::ifstream &inp);
 std:: string strip(std::string  str);
+void msort(unsigned int * arr, unsigned int start, unsigned int end);
+void merge(unsigned int *, unsigned int, unsigned int, unsigned int);
 
 
 int main()
@@ -178,6 +191,7 @@ int main()
   /* Store files in the folder named "files", where "files" is a subfolder of the folder where file is present */
   system("ls files/*.txt>/tmp/files.txt");
   std::ifstream fin("/tmp/files.txt");
+  std::ofstream fout("out.txt");
   numFiles = Lines(fin);
   std::string *fNames = new std::string[numFiles];
   for(int i =0; i< numFiles; i++)
@@ -190,7 +204,10 @@ int main()
       std::cout<<fNames[i]<<std::endl;
     }
   std::string temp; 
+  std::cout<<"Initializing the Hash Table"<<std::endl;
   hashMap test;
+  std::cout<<"Initialization completed"<<std::endl;
+  std::cout<<"Reading the files; please wait..."<<std::endl;
   for(int i =0; i< numFiles; i++)
     {
       std::ifstream inp(fNames[i].c_str());
@@ -198,10 +215,15 @@ int main()
 	{
 	  temp = strip(temp);
 	  if(temp != "")
-	    test.put(temp, i);
+	    {
+	      test.put(temp, i);
+	      fout<<temp<<" "<<test.hash(temp)<<std::endl;
+	      fout.flush();
+	    }
 	}  
       inp.close();
     }
+  std::cout<<"Reading completed!"<<std::endl;
   std::cout<<"Enter string to search for: ";
   std::cin>>temp;
   temp = strip(temp);
@@ -216,12 +238,55 @@ int main()
   else if(flag == 1)
     {
       std::cout<<"String found"<<std::endl;
+      unsigned int *counter = new unsigned [numFiles];
+      for(unsigned int i = 0; i<numFiles; i++)
+	counter[i] = i;
+      msort(counter, 0, numFiles);
       std::cout<<"Indexes are the following"<<std::endl;
-      for(int i = 0; i<numFiles; i++)
-	std::cout<<fNames[i]<<":"<<templist[i].ret_count()<<std::endl;
+      for(int i = 0, flag =1; i<numFiles && flag; i++)
+	{
+	  if(flag = templist[counter[i]].ret_count()) /* the = is intentional */ 
+	    std::cout<<fNames[counter[i]]<<":"<<templist[counter[i]].ret_count()<<std::endl; 
+	}
     }
   fin.close();
   return 0;
+}
+
+void msort(unsigned int * arr, unsigned int start, unsigned int end)
+{
+  if(start < end)
+    {
+      unsigned int temp = (start+end)/2;
+      msort(arr, start, temp);
+      msort(arr, temp+1, end);
+      merge(arr, start, temp, end);
+    }
+}
+
+void merge(unsigned int * arr, unsigned int start, unsigned int middle, unsigned int end)
+{
+  unsigned int *temp1 = new unsigned int[middle-start+1];
+  unsigned int *temp2 = new unsigned int[end-middle];
+  for(unsigned int i = start; i<= middle; i++)
+    temp1[i-start] = arr[i];
+  for(unsigned int i = middle+1; i< end; i++)
+    temp2[i-middle-1] = arr[i];
+  for(unsigned int i = start, j = 0, k = 0; i<end; i++)
+    {
+      if(k >= end-middle-1 || (j <= middle && templist[temp1[j]].ret_count() >= templist[temp2[k]].ret_count()))
+	{
+	  arr[i] = temp1[j];
+	  j++;
+	}
+      else
+	{
+	  arr[i] = temp2[k];
+	  k++;
+	}	  
+    }
+  delete []temp1;
+  delete []temp2;
 }
 
 unsigned int Lines(std::ifstream &inp)
