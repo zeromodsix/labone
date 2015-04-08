@@ -10,6 +10,9 @@
 * Try to add large files, as long as they are text files (commas, periods and other special characters should pose no problem). The following links may be used to get random paragraphs
   * http://randomtextgenerator.com/
   * http://watchout4snakes.com/wo4snakes/Random/RandomParagraph
+* For dictionaries, the following links can be useful:
+  * http://stackoverflow.com/questions/4456446/dictionary-text-file
+  * http://www.math.sjsu.edu/~foster/dictionary.txt
 * Report issues, if any, in the following link https://github.com/zeromodsix/labone/issues.
 * Comments regarding speed, size, memory, etc. are appreciated. 
 
