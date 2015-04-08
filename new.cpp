@@ -244,9 +244,8 @@ int main()
   for(int i =0; i< numFiles; i++)
     {
       std::ifstream inp(fNames[i].c_str());
-      while(!inp.eof())
+      while(inp>>temp)
 	{
-	  inp>>temp;
 	  strip(temp);
 	  if(temp != "")
 	    {
