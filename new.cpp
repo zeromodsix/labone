@@ -4,7 +4,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<fstream>
-#define SIZE 1000000 /* need to increase this!! */
+#define SIZE 100000 /* need to increase this!! */
 unsigned int numFiles;
 class filecount * templist = NULL;
 
@@ -64,7 +64,10 @@ public:
   }
   void change(std::string st, unsigned int file);
   void fileIncrease(unsigned int file);
-
+  ~linkedHashEntry()
+  {
+    delete [] fileList;
+  }
 };
 
 void linkedHashEntry::change(std::string st, unsigned int file)
@@ -98,8 +101,29 @@ public:
     for(int i = 0; i< SIZE; i++)
       table[i] = NULL;
   }
+  ~hashMap();
   
 };
+
+hashMap::~hashMap()
+{
+  linkedHashEntry *temp1, *temp2; 
+  for(int i = 0; i < SIZE; i++)
+    {
+      if(table[i] != NULL)
+	{
+	  temp1 = table[i];
+	  while(temp1->getNext() != NULL)
+	    {
+	      temp2 = temp1;
+	      temp1 = temp1->getNext();
+	      delete temp2;
+	    }
+	  delete temp1;
+	}
+    }
+  delete [] table;
+}
 
 
 /* Returns -1 if entry is not present, returns 1 and copies the pointer to list to templist */
@@ -168,19 +192,24 @@ unsigned long int hashMap::hash(const std::string str)
 {
   unsigned long int hash = 5381;
   int c;
-  char *temp = new char[str.size()];
+  char *temp = new char[str.size()+1];
+  if(temp == NULL)
+    {
+      std::cout<<"Insufficient memory"<<std::endl;
+      exit(EXIT_FAILURE);
+    }
   temp[0] = 0;
   strcpy(temp, str.c_str());
   unsigned char * st = reinterpret_cast<unsigned char *>(temp);
   /* http://stackoverflow.com/questions/5040920/ */
   while (c = *st++)
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
+  delete[] temp;
   return (hash % SIZE);
 }
 
 unsigned int Lines(std::ifstream &inp);
-std:: string strip(std::string  str);
+int strip(std::string  &str);
 void msort(unsigned int * arr, unsigned int start, unsigned int end);
 void merge(unsigned int *, unsigned int, unsigned int, unsigned int);
 
@@ -193,6 +222,11 @@ int main()
   std::ifstream fin("/tmp/files.txt");
   std::ofstream fout("out.txt");
   numFiles = Lines(fin);
+  if(numFiles == 0)
+    {
+      std::cout<<"There are no text files in the folder"<<std::endl;
+      return EXIT_FAILURE;
+    }
   std::string *fNames = new std::string[numFiles];
   for(int i =0; i< numFiles; i++)
     {
@@ -211,9 +245,10 @@ int main()
   for(int i =0; i< numFiles; i++)
     {
       std::ifstream inp(fNames[i].c_str());
-      while(inp>>temp)
+      while(!inp.eof())
 	{
-	  temp = strip(temp);
+	  inp>>temp;
+	  strip(temp);
 	  if(temp != "")
 	    {
 	      test.put(temp, i);
@@ -226,7 +261,7 @@ int main()
   std::cout<<"Reading completed!"<<std::endl;
   std::cout<<"Enter string to search for: ";
   std::cin>>temp;
-  temp = strip(temp);
+  strip(temp);
   if(temp == "")
     {
       std::cout<<"Improper search: you searched for \""<<temp<<"\""<<std::endl;
@@ -248,8 +283,10 @@ int main()
 	  if(flag = templist[counter[i]].ret_count()) /* the = is intentional */ 
 	    std::cout<<fNames[counter[i]]<<":"<<templist[counter[i]].ret_count()<<std::endl; 
 	}
+      delete[] counter;
     }
   fin.close();
+  delete[] fNames;
   return 0;
 }
 
@@ -300,10 +337,15 @@ unsigned int Lines(std::ifstream &inp)
   return count;
 }
 
-std:: string strip(std::string str)
+int strip(std::string &str)
 {
-  char * s = new char[str.size()];
-  char * temp = new char[str.size()];
+  char * s = new char[str.size()+1];
+  char * temp = new char[str.size()+1];
+  if(s == NULL || temp == NULL)
+    {
+      std::cout<<"Insufficient memory"<<std::endl;
+      exit(EXIT_FAILURE);
+    }
   strcpy(s,str.c_str());
   int j = 0;
   for(int i = 0; i<str.size(); i++)
@@ -320,6 +362,10 @@ std:: string strip(std::string str)
   if(j == 0)
     str.assign("");
   else
-    str.assign(temp);
-  return str;  
+    {
+      str.assign(temp);
+    }
+  delete[] s;
+  delete[] temp;
+  return 0;
 }
