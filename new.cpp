@@ -11,7 +11,7 @@ class filecount * templist = NULL;
 class filecount
 {
 private:
-  unsigned int index;
+  //unsigned int index;
   unsigned int count;
 public:
   filecount()
@@ -220,7 +220,6 @@ int main()
   /* Store files in the folder named "files", where "files" is a subfolder of the folder where file is present */
   system("ls files/*.txt>/tmp/files.txt");
   std::ifstream fin("/tmp/files.txt");
-  std::ofstream fout("out.txt");
   numFiles = Lines(fin);
   if(numFiles == 0)
     {
@@ -252,39 +251,42 @@ int main()
 	  if(temp != "")
 	    {
 	      test.put(temp, i);
-	      fout<<temp<<" "<<test.hash(temp)<<std::endl;
-	      fout.flush();
 	    }
 	}  
       inp.close();
     }
   std::cout<<"Reading completed!"<<std::endl;
-  std::cout<<"Enter string to search for: ";
-  std::cin>>temp;
-  strip(temp);
-  if(temp == "")
-    {
-      std::cout<<"Improper search: you searched for \""<<temp<<"\""<<std::endl;
-      return 0;
-    }
-  int flag = test.get(temp);
-  if(flag == -1)
-    std::cout<<"Not found"<<std::endl;
-  else if(flag == 1)
-    {
-      std::cout<<"String found"<<std::endl;
-      unsigned int *counter = new unsigned [numFiles];
-      for(unsigned int i = 0; i<numFiles; i++)
-	counter[i] = i;
-      msort(counter, 0, numFiles);
-      std::cout<<"Indexes are the following"<<std::endl;
-      for(int i = 0, flag =1; i<numFiles && flag; i++)
-	{
-	  if(flag = templist[counter[i]].ret_count()) /* the = is intentional */ 
-	    std::cout<<fNames[counter[i]]<<":"<<templist[counter[i]].ret_count()<<std::endl; 
-	}
-      delete[] counter;
-    }
+  char ch='n';
+  do{
+    std::cout<<"Enter string to search for: ";
+    std::cin>>temp;
+    strip(temp);
+    if(temp == "")
+      {
+	std::cout<<"Improper search: you searched for \""<<temp<<"\""<<std::endl;
+	return 0;
+      }
+    int flag = test.get(temp);
+    if(flag == -1)
+      std::cout<<"Not found"<<std::endl;
+    else if(flag == 1)
+      {
+	std::cout<<"String found"<<std::endl;
+	unsigned int *counter = new unsigned [numFiles];
+	for(unsigned int i = 0; i<numFiles; i++)
+	  counter[i] = i;
+	msort(counter, 0, numFiles-1);
+	std::cout<<"Indexes are the following"<<std::endl;
+	for(int i = 0, flag =1; i<numFiles && flag; i++)
+	  {
+	    if(flag = templist[counter[i]].ret_count()) /* the = is intentional */ 
+	      std::cout<<fNames[counter[i]]<<": "<<templist[counter[i]].ret_count()<<std::endl; 
+	  }
+	delete[] counter;
+      }
+    std::cout<<"Do you wish to search again? (y/n): ";
+    std::cin>>ch;
+  }while(ch =='y' || ch == 'Y');
   fin.close();
   delete[] fNames;
   return 0;
@@ -305,13 +307,13 @@ void merge(unsigned int * arr, unsigned int start, unsigned int middle, unsigned
 {
   unsigned int *temp1 = new unsigned int[middle-start+1];
   unsigned int *temp2 = new unsigned int[end-middle];
-  for(unsigned int i = start; i<= middle; i++)
+  for(unsigned int i = start; i <= middle; i++)
     temp1[i-start] = arr[i];
-  for(unsigned int i = middle+1; i< end; i++)
+  for(unsigned int i = middle+1; i <= end; i++)
     temp2[i-middle-1] = arr[i];
-  for(unsigned int i = start, j = 0, k = 0; i<end; i++)
+  for(unsigned int i = start, j = 0, k = 0; i<= end; i++)
     {
-      if(k >= end-middle-1 || (j <= middle && templist[temp1[j]].ret_count() >= templist[temp2[k]].ret_count()))
+      if(k > end-middle-1 || (j <= (middle-start) && templist[temp1[j]].ret_count() >= templist[temp2[k]].ret_count()))
 	{
 	  arr[i] = temp1[j];
 	  j++;
