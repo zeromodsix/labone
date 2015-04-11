@@ -21,8 +21,7 @@
 
   
 * **Report issues**, if any, in the following link: https://github.com/zeromodsix/labone/issues.
-* Comments regarding speed, size, memory, etc. are appreciated. 
-=======
+* Comments regarding speed, size, memory, etc. are appreciated.
 * Report issues, if any, in the following link https://github.com/zeromodsix/labone/issues.
 * Comments regarding speed, size, memory, etc. are appreciated.
 
