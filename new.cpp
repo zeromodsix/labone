@@ -4,6 +4,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<fstream>
+#include<boost/timer.hpp> /* If your compiler yells, download the boost libraries */ 
 #define SIZE 100000 /* need to increase this!! */
 unsigned int numFiles;
 class filecount * templist = NULL;
@@ -238,6 +239,7 @@ int main()
     }
   std::string temp; 
   std::cout<<"Initializing the Hash Table"<<std::endl;
+  boost::timer t;
   hashMap test;
   std::cout<<"Initialization completed"<<std::endl;
   std::cout<<"Reading the files; please wait..."<<std::endl;
@@ -254,7 +256,9 @@ int main()
 	}  
       inp.close();
     }
-  std::cout<<"Reading completed!"<<std::endl;
+  std::cout<<"Reading completed!"<<std::endl; 
+  double elapsed_time = t.elapsed(); /* Time elapsed between declaring t and here */ 
+  std::cout<<"Time elapsed = "<<elapsed_time<<std::endl;
   char ch='n';
   do{
     std::cout<<"Enter string to search for: ";
