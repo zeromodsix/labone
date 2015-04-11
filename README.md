@@ -1,8 +1,10 @@
 # Lab 1--Search Engine
 
 **Status**: The project is almost completed, it only remains to undergo the testing stage.
+
 **Currently only supports English Alphabet, i.e., Unicode is unsupported**.
-**Quick Stats**: The program takes about 4 seconds to initialize the hash table, scan through files of size approximately 100 Megabytes and create a hash table in for searching.
+
+* **Quick Stats**: The program takes about 4 seconds to initialize the hash table, scan through files of size approximately 100 Megabytes and create a hash table in for searching.
 
 ## Test the program
 
