@@ -9,8 +9,6 @@
 ## Test the program
 
 * Download the program `new.cpp`, and the file `/files`. Compile it in a Linux machine (currently requires `boost/timer.hpp` library to display elapsed time). 
-
-* To ease out the testing process, there is a shell script `combineall.sh` which will copy contents of all the text files inside the `/files` directory to a single text file `all.txt`. To test, whether the output of the program is correct, open the file `all.txt`. Then use your text editor to run a search and cross-check if the counts match. (*Optional*)
 * **Try to add large files**, as long as they are text files (commas, periods and other special characters should pose no problem). The following links may be used to get random paragraphs
 * Try to add large files, as long as they are text files (commas, periods and other special characters should pose no problem). The following links may be used to get random paragraphs
 
@@ -22,11 +20,8 @@
   * http://www.puzzlers.org/pub/wordlists/mbsingle.txt
   * http://www.math.sjsu.edu/~foster/dictionary.txt
 
-  
 * **Report issues**, if any, in the following link: https://github.com/zeromodsix/labone/issues.
-* Comments regarding speed, size, memory, etc. are appreciated.
-* Report issues, if any, in the following link https://github.com/zeromodsix/labone/issues.
-* Comments regarding speed, size, memory, etc. are appreciated.
+* Comments regarding speed, size, memory, etc. are appreciated. (For very large files, this procedure may turn out to be very difficult.)
 
 
 * To ease out the testing process, there is **a shell script** `combineall.sh` which will copy contents of all the text files inside the `/files` directory to a single text file `all.txt`. To test, whether the output of the program is correct, open the file `all.txt` (after running the command `sh combineall.sh`). Then use your text editor to run a search and cross-check if the counts match. 
