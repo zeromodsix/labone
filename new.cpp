@@ -4,6 +4,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<fstream>
+#include<iomanip> /* For setw() */ 
 #include<boost/timer.hpp> /* If your compiler yells, download the boost libraries */ 
 #define SIZE 100000 /* need to increase this!! */
 unsigned int numFiles;
@@ -23,7 +24,7 @@ public:
   {
     count++;
   }
-  int ret_count()
+  unsigned int ret_count()
   {
     return (count);
   }
@@ -87,8 +88,8 @@ class hashMap
 {
 private:
   linkedHashEntry **table;
-public:
   unsigned long int hash(const std::string );
+public:
   void put(std::string str, unsigned int file);
   int get(std::string str);
   hashMap()
@@ -199,7 +200,7 @@ unsigned long int hashMap::hash(const std::string str)
       std::cout<<"Insufficient memory"<<std::endl;
       exit(EXIT_FAILURE);
     }
-  temp[0] = 0;
+  temp[0] = 0; /* temp is initialized to an empty string 0 is the ASCII for '\0' character */ 
   strcpy(temp, str.c_str());
   unsigned char * st = reinterpret_cast<unsigned char *>(temp);
   /* http://stackoverflow.com/questions/5040920/ */
@@ -283,7 +284,7 @@ int main()
 	for(int i = 0, flag =1; i<numFiles && flag; i++)
 	  {
 	    if(flag = templist[counter[i]].ret_count()) /* the = is intentional */ 
-	      std::cout<<fNames[counter[i]]<<": "<<templist[counter[i]].ret_count()<<std::endl; 
+	      std::cout<<std::setw(50)<<fNames[counter[i]]<<": "<<std::setw(8)<<templist[counter[i]].ret_count()<<std::endl; 
 	  }
 	delete[] counter;
       }
